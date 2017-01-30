@@ -1,8 +1,5 @@
-import os
-import math
 import time
 import tensorflow as tf
-import numpy as np
 from tensorflow.examples.tutorials.mnist import input_data
 
 IMAGE_SIZE_X = 28
