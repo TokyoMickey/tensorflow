@@ -10,16 +10,13 @@ NUM_CLASS = 10
 flags = tf.app.flags
 DEFINE = flags.FLAGS
 
-flags.DEFINE_float('random_normal_stddev', 5e-2, 'Random normal standard deviation')
-flags.DEFINE_float('learning_rate', 1e-5, 'Learning rate')
+flags.DEFINE_float('random_normal_stddev', 1e-2, 'Random normal standard deviation')
+flags.DEFINE_float('learning_rate', 5e-5, 'Learning rate')
 flags.DEFINE_float('dropout_keep_prob', 0.5, 'Dropout keep probability')
 
-flags.DEFINE_integer('epochs', 10000, 'Number of epochs')
-flags.DEFINE_integer('iterations_per_epoch', 100, 'Number of iteration per epoch')
+flags.DEFINE_integer('epochs', 500, 'Number of epochs')
 flags.DEFINE_integer('train_batch_size', 64, 'Training batch size')
 flags.DEFINE_integer('validation_batch_size', 100, 'Validation batch size')
-
-flags.DEFINE_integer('save_freq', 10000, 'Save frequency')
 
 NUM_CONV1_FILTERS = 64
 NUM_CONV2_FILTERS = 64
@@ -149,7 +146,7 @@ def main(argv):
 
     for i in range(DEFINE.epochs):
         loss_sum = 0.0
-        for _ in range(DEFINE.iterations_per_epoch):
+        while(mnist.train.epochs_completed == i):
             batch_x, batch_y = mnist.train.next_batch(DEFINE.train_batch_size)
             loss_sum += sess.run([loss, train], feed_dict={x_in: batch_x, y_in: batch_y, dropout_keep_prob: DEFINE.dropout_keep_prob})[0]
 
@@ -159,7 +156,7 @@ def main(argv):
             cp_sum += sess.run(correct_prediction, feed_dict={x_in: batch_x, y_in: batch_y, dropout_keep_prob: 1.0}).sum()
 
         print("{:08d}\t{:.15f}\t{:.4f}\t{:06d}".
-              format(i + 1, loss_sum / DEFINE.iterations_per_epoch, cp_sum / mnist.test.num_examples, int(time.time() - start)))
+              format(i + 1, loss_sum / mnist.train.num_examples, cp_sum / mnist.test.num_examples, int(time.time() - start)))
 
 if __name__ == '__main__':
     tf.app.run()
